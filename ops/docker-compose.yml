@@ -1,0 +1,29 @@
+
+# Run the postgres db via a docker container (episodic memory)
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: agent_harness
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+
+  langfuse-server:
+    image: langfuse/langfuse:latest
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://admin:secretpassword@postgres:5432/agent_harness
+      - NEXTAUTH_SECRET=local_secret
+      - SALT=local_salt
+
+volumes:
+  pg_data:

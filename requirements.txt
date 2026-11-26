@@ -1,0 +1,2 @@
+pip install playwright chromadb psycopg2-binary openai langfuse
+playwright install chromium
